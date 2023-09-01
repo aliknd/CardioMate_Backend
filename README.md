@@ -1,3 +1,3 @@
 # STAND-STressANxietyDetecion-Backend
 
-Backend of MethAware Mobile Application - NodeJS
+Backend of MethAware Mobile Application -- NodeJS
