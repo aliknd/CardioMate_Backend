@@ -27,7 +27,7 @@ router.post("/", validateWith.validateWith(schema), async (req, res) => {
       name: user.name,
       email,
       badge: user.badge,
-      catdog: user.catdog,
+      preference: user.preference,
     },
     "jwtPrivateKey"
   );

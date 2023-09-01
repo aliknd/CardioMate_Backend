@@ -3,16 +3,29 @@ const result = await myDatabase.pool.query("SELECT * FROM feeder");
 var listings = result[0];
 
 const addListing = (listing) => {
+  const mySubstanceFruitValue = listing.substanceValue;
+  const mySubstanceFruitLabel = listing.substanceLabel;
+  const mycuseValue = listing.cuseValue;
+  const mycuseLabel = listing.cuseLabel;
   const mycraveUseClass = listing.categoryLabel;
-  console.log(mycraveUseClass);
+  //console.log(mycraveUseClass);
   const mycraveUseId = listing.categoryId;
   const myQuestionId = listing.questionId;
   const myUserId = listing.cuserId;
   // console.log(mycraveUse);
   // console.log(myUserId);
   myDatabase.pool.query(
-    "INSERT INTO record (question_id, crave_use_class, crave_use_id, user_id) VALUES (?, ?, ?, ?)",
-    [myQuestionId, mycraveUseClass, mycraveUseId, myUserId],
+    "INSERT INTO record (substance_fruit, substance_fruit_id, crave_use, crave_use_id, question_id, final_answer, final_answer_id, user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+    [
+      mySubstanceFruitLabel,
+      mySubstanceFruitValue,
+      mycuseLabel,
+      mycuseValue,
+      myQuestionId,
+      mycraveUseClass,
+      mycraveUseId,
+      myUserId,
+    ],
     function (err, result) {
       if (err) throw err;
       console.log("Inserted Successfully!" + result.affectedRows);

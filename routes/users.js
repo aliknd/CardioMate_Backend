@@ -11,6 +11,7 @@ const schema = {
   genCategory: Joi.object().required(),
   ageCategory: Joi.object().required(),
   raceCategory: Joi.object().required(),
+  preference: Joi.object().required(),
   //catDog: Joi.object().required(),
   password: Joi.string().required().min(5),
 };
@@ -23,6 +24,7 @@ router.post("/", validateWith.validateWith(schema), async (req, res) => {
     genCategory,
     ageCategory,
     raceCategory,
+    preference,
     //catDog,
     password,
   } = req.body;
@@ -39,6 +41,7 @@ router.post("/", validateWith.validateWith(schema), async (req, res) => {
     genCategory,
     ageCategory,
     raceCategory,
+    preference,
     //catDog,
     password,
   };

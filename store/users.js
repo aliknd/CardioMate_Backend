@@ -4,11 +4,12 @@ const addUser = async (user) => {
   const genCategory = user.genCategory.label;
   const ageCategory = user.ageCategory.value;
   const raceCategory = user.raceCategory.label;
+  const preference = user.preference.label;
   //const catDog = user.catDog.label;
   const password = user.password;
   await myDatabase.pool.query(
-    "INSERT INTO user (name, email, genCategory, ageCategory, raceCategory, password) VALUES (?, ?, ?, ?, ?, ?)",
-    [name, email, genCategory, ageCategory, raceCategory, password],
+    "INSERT INTO user (name, email, genCategory, ageCategory, raceCategory, preference, password) VALUES (?, ?, ?, ?, ?, ?, ?)",
+    [name, email, genCategory, ageCategory, raceCategory, preference, password],
     function (err, result) {
       if (err) throw err;
       console.log("Number of records inserted: " + result.affectedRows);
