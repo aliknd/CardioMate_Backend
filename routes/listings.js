@@ -52,6 +52,7 @@ router.post(
       substanceLabel: req.body.substanceLabel,
       cuseValue: parseInt(req.body.cuseValue),
       cuseLabel: req.body.cuseLabel,
+      userBadge: parseInt(req.body.userBadge),
     };
     console.log(listing);
     //listing.images = req.images.map((fileName) => ({ fileName: fileName }));

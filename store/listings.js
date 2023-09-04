@@ -12,6 +12,7 @@ const addListing = (listing) => {
   const mycraveUseId = listing.categoryId;
   const myQuestionId = listing.questionId;
   const myUserId = listing.cuserId;
+  const userBadge = listing.userBadge;
   // console.log(mycraveUse);
   // console.log(myUserId);
   myDatabase.pool.query(
@@ -29,6 +30,15 @@ const addListing = (listing) => {
     function (err, result) {
       if (err) throw err;
       console.log("Inserted Successfully!" + result.affectedRows);
+    }
+  );
+
+  myDatabase.pool.query(
+    "UPDATE user SET badge = ? WHERE id = ?",
+    [userBadge, myUserId],
+    function (err, result) {
+      if (err) throw err;
+      console.log("Updated Successfully!" + result.affectedRows);
     }
   );
 };
