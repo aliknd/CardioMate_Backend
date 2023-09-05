@@ -17,7 +17,7 @@ const schema = {
 };
 
 router.post("/", validateWith.validateWith(schema), async (req, res) => {
-  console.log(req.body);
+  //console.log(req.body);
   const {
     name,
     email,

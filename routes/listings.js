@@ -42,7 +42,7 @@ router.post(
   ],
 
   async (req, res) => {
-    console.log(req.body);
+    //console.log(req.body);
     const listing = {
       categoryLabel: req.body.categoryLabel,
       categoryId: parseInt(req.body.categoryId),
@@ -54,7 +54,7 @@ router.post(
       cuseLabel: req.body.cuseLabel,
       userBadge: parseInt(req.body.userBadge),
     };
-    console.log(listing);
+    //console.log(listing);
     //listing.images = req.images.map((fileName) => ({ fileName: fileName }));
     if (req.user) listing.userId = req.user.userId;
 

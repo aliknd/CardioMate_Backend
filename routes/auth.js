@@ -1,6 +1,7 @@
 import express from "express";
 const router = express.Router();
 import Joi from "joi";
+import bcrypt from "bcrypt";
 
 import Jwt from "jsonwebtoken";
 import validateWith from "../middleware/validation.js";
@@ -15,10 +16,10 @@ router.post("/", validateWith.validateWith(schema), async (req, res) => {
   const { email, password } = req.body;
   const user_received = await usersStore.getUserByEmail(email);
   const user = user_received[0][0];
-  console.log("=============");
-  console.log(user);
-  console.log("=============");
-  if (!user || user.password !== password)
+  //console.log("=============");
+  //console.log(user);
+  //console.log("=============");
+  if (!user || !(await bcrypt.compare(password, user.password)))
     return res.status(400).send({ error: "Invalid email or password." });
 
   const token = Jwt.sign(
