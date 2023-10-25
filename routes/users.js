@@ -1,6 +1,7 @@
 import express from "express";
 const router = express.Router();
 import Joi from "joi";
+import auth from "../middleware/auth.js";
 
 import usersStore from "../store/users.js";
 import validateWith from "../middleware/validation.js";
@@ -27,6 +28,7 @@ router.post("/", validateWith.validateWith(schema), async (req, res) => {
     preference,
     //catDog,
     password,
+    access_type,
   } = req.body;
   const user_received = await usersStore.getUserByEmail(email);
   const user_r = user_received[0][0];
@@ -44,13 +46,14 @@ router.post("/", validateWith.validateWith(schema), async (req, res) => {
     preference,
     //catDog,
     password,
+    access_type,
   };
   usersStore.addUser(user);
 
   res.status(201).send(user);
 });
 
-router.get("/", (req, res) => {
+router.get("/", auth.auth, (req, res) => {
   res.send(usersStore.getUsers);
 });
 

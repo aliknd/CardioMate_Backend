@@ -2,6 +2,8 @@ import express from "express";
 const router = express.Router();
 import Joi from "joi";
 import bcrypt from "bcrypt";
+import dotenv from "dotenv";
+dotenv.config();
 
 import Jwt from "jsonwebtoken";
 import validateWith from "../middleware/validation.js";
@@ -16,6 +18,7 @@ router.post("/", validateWith.validateWith(schema), async (req, res) => {
   const { email, password } = req.body;
   const user_received = await usersStore.getUserByEmail(email);
   const user = user_received[0][0];
+  const secretKey = process.env.JWT_SECRET;
   //console.log("=============");
   //console.log(user);
   //console.log("=============");
@@ -29,8 +32,9 @@ router.post("/", validateWith.validateWith(schema), async (req, res) => {
       email,
       badge: user.badge,
       preference: user.preference,
+      access_type: user.access_type,
     },
-    "jwtPrivateKey"
+    secretKey
   );
   res.send(token);
   console.log(token);

@@ -49,7 +49,7 @@ const addUser = async (user) => {
 
 import myDatabase from "../config/db.js";
 const result = await myDatabase.pool.query(
-  "SELECT id, genCategory, ageCategory, raceCategory, preference, badge FROM user"
+  "SELECT id, email, genCategory, ageCategory, raceCategory, preference, badge, access_type FROM user"
 );
 var users = result[0];
 

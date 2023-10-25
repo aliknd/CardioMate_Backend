@@ -12,6 +12,7 @@ import auth from "./routes/auth.js";
 import my from "./routes/my.js";
 import messages from "./routes/messages.js";
 import expoPushTokens from "./routes/expoPushTokens.js";
+import omronhg from "./routes/omronhg.js";
 
 import compression from "compression";
 import config from "config";
@@ -35,10 +36,9 @@ app.use("/api/auth", auth.router);
 app.use("/api/my", my.router);
 app.use("/api/expoPushTokens", expoPushTokens.router);
 app.use("/api/messages", messages.router);
+app.use("/api/omronhg", omronhg.router);
 
 // saving sensor data
-
-app.use(express.json());
 
 app.post("/save-sensor-data", (req, res) => {
   const { userId, timestamp, sensorType, data } = req.body;

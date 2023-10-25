@@ -48,7 +48,7 @@ router.post(
       categoryId: parseInt(req.body.categoryId),
       questionId: parseInt(req.body.questionId),
       cuserId: parseInt(req.body.cuserId),
-      substanceValue: parseInt(req.body.substanceValue),
+      substanceValue: req.body.substanceValue,
       substanceLabel: req.body.substanceLabel,
       cuseValue: parseInt(req.body.cuseValue),
       cuseLabel: req.body.cuseLabel,
