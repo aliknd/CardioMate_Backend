@@ -14,6 +14,10 @@ import messages from "./routes/messages.js";
 import expoPushTokens from "./routes/expoPushTokens.js";
 import omronhg from "./routes/omronhg.js";
 
+import omronAuth from "./routes/omronAuth.js";
+import omronCallback from "./routes/omronCallback.js";
+import omronDataFetch from "./routes/omronDataFetch.js";
+
 import compression from "compression";
 import config from "config";
 import helmet from "helmet";
@@ -37,6 +41,11 @@ app.use("/api/my", my.router);
 app.use("/api/expoPushTokens", expoPushTokens.router);
 app.use("/api/messages", messages.router);
 app.use("/api/omronhg", omronhg.router);
+
+// OAuth and Data Fetching Routes
+app.use("/auth/omron", omronAuth.router);
+app.use("/callback", omronCallback.router);
+app.use("/fetch-omron-data", omronDataFetch.router);
 
 // saving sensor data
 
