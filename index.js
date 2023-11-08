@@ -2,6 +2,7 @@ import express from "express";
 import fs from "fs";
 
 import listings from "./routes/listings.js";
+import feedbacks from "./routes/feedbacks.js";
 import listing from "./routes/listing.js";
 import questions from "./routes/questions.js";
 import records from "./routes/records.js";
@@ -30,12 +31,13 @@ app.use(helmet());
 app.use(compression());
 
 app.use("/api/listing", listing.router);
-app.use("/api/listings", listings.router);
-app.use("/api/questions", questions.router);
-app.use("/api/records", records.router);
-app.use("/api/gmessages", gmessages.router);
+app.use("/api/listings", listings);
+app.use("/api/feedbacks", feedbacks.router);
+app.use("/api/questions", questions);
+app.use("/api/records", records);
+app.use("/api/gmessages", gmessages);
 app.use("/api/user", user.router);
-app.use("/api/users", users.router);
+app.use("/api/users", users);
 app.use("/api/auth", auth.router);
 app.use("/api/my", my.router);
 app.use("/api/expoPushTokens", expoPushTokens.router);
@@ -44,8 +46,8 @@ app.use("/api/omronhg", omronhg.router);
 
 // OAuth and Data Fetching Routes
 app.use("/auth/omron", omronAuth.router);
-app.use("/callback", omronCallback.router);
-app.use("/fetch-omron-data", omronDataFetch.router);
+app.use("/", omronCallback.router);
+app.use("/fetchdata", omronDataFetch.router);
 
 // saving sensor data
 

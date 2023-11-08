@@ -5,10 +5,7 @@ import multer from "multer";
 
 import store from "../store/listings.js";
 import validateWith from "../middleware/validation.js";
-import auth from "../middleware/auth.js";
-import imageResize from "../middleware/imageResize.js";
 import listingMapper from "../mappers/listings.js";
-//import config from "config";
 
 const upload = multer({
   dest: "uploads/",
@@ -26,10 +23,15 @@ const schema = {
 //   next();
 // };
 
-router.get("/", (req, res) => {
-  const listings = store.getListings;
-  const resources = listings.map(listingMapper.mapper);
-  res.send(resources);
+router.get("/", async (req, res) => {
+  try {
+    const listings = await store.getListings();
+    const resources = listings.map(listingMapper.mapper);
+    res.send(resources);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ error: "Internal Server Error" });
+  }
 });
 
 router.post(
@@ -44,24 +46,39 @@ router.post(
   async (req, res) => {
     //console.log(req.body);
     const listing = {
-      categoryLabel: req.body.categoryLabel,
-      categoryId: parseInt(req.body.categoryId),
-      questionId: parseInt(req.body.questionId),
-      cuserId: parseInt(req.body.cuserId),
-      substanceValue: req.body.substanceValue,
-      substanceLabel: req.body.substanceLabel,
-      cuseValue: parseInt(req.body.cuseValue),
-      cuseLabel: req.body.cuseLabel,
-      userBadge: parseInt(req.body.userBadge),
+      payload: req.body.payload,
+      userId: parseInt(req.body.userId),
     };
     //console.log(listing);
+    //console.log("Raw payload:", listing.payload);
+    let parsedPayload = JSON.parse(listing.payload);
+
+    let recordsToInsert = Object.values(parsedPayload)
+      .map((item) => {
+        if (!item.step1Value || !item.step2Value) {
+          console.error("Invalid item structure:", item);
+          return null; // or handle this case as needed
+        }
+
+        // Use the description if the label is 'Others', otherwise use the label
+        let labelOrDescription =
+          item.label === "Others" ? item.description : item.label;
+
+        return [
+          labelOrDescription,
+          item.step1Value.label,
+          item.step2Value.label,
+          listing.userId,
+        ];
+      })
+      .filter((item) => item !== null); // Filter out any nulls from invalid structures
     //listing.images = req.images.map((fileName) => ({ fileName: fileName }));
     if (req.user) listing.userId = req.user.userId;
 
-    store.addListing(listing);
+    store.addListing(recordsToInsert);
 
     res.status(201).send(listing);
   }
 );
 
-export default { router };
+export default router;

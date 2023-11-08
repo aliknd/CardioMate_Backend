@@ -10,7 +10,7 @@ const schema = {
   name: Joi.string().required().min(2),
   email: Joi.string().email().required(),
   genCategory: Joi.object().required(),
-  ageCategory: Joi.object().required(),
+  birthdate: Joi.object().required(),
   raceCategory: Joi.object().required(),
   preference: Joi.object().required(),
   //catDog: Joi.object().required(),
@@ -23,7 +23,7 @@ router.post("/", validateWith.validateWith(schema), async (req, res) => {
     name,
     email,
     genCategory,
-    ageCategory,
+    birthdate,
     raceCategory,
     preference,
     //catDog,
@@ -41,7 +41,7 @@ router.post("/", validateWith.validateWith(schema), async (req, res) => {
     name,
     email,
     genCategory,
-    ageCategory,
+    birthdate,
     raceCategory,
     preference,
     //catDog,
@@ -53,8 +53,13 @@ router.post("/", validateWith.validateWith(schema), async (req, res) => {
   res.status(201).send(user);
 });
 
-router.get("/", auth.auth, (req, res) => {
-  res.send(usersStore.getUsers);
+router.get("/", auth.auth, async (req, res) => {
+  try {
+    const users = await usersStore.getUsers();
+    res.send(users);
+  } catch (error) {
+    res.status(500).send({ error: "Internal Server Error" });
+  }
 });
 
-export default { router };
+export default router;

@@ -16,28 +16,35 @@ const schema = {
 
 router.post("/", validateWith.validateWith(schema), async (req, res) => {
   const { email, password } = req.body;
-  const user_received = await usersStore.getUserByEmail(email);
-  const user = user_received[0][0];
-  const secretKey = process.env.JWT_SECRET;
-  //console.log("=============");
-  //console.log(user);
-  //console.log("=============");
-  if (!user || !(await bcrypt.compare(password, user.password)))
-    return res.status(400).send({ error: "Invalid email or password." });
+  try {
+    const users = await usersStore.getUserByEmail(email);
+    if (users.length === 0) {
+      return res.status(400).send({ error: "Invalid email or password." });
+    }
 
-  const token = Jwt.sign(
-    {
-      userId: user.id,
-      name: user.name,
-      email,
-      badge: user.badge,
-      preference: user.preference,
-      access_type: user.access_type,
-    },
-    secretKey
-  );
-  res.send(token);
-  console.log(token);
+    const user = users[0];
+    const secretKey = process.env.JWT_SECRET;
+
+    if (!user || !(await bcrypt.compare(password, user.password))) {
+      return res.status(400).send({ error: "Invalid email or password." });
+    }
+
+    const token = Jwt.sign(
+      {
+        userId: user.id,
+        name: user.name,
+        email,
+        badge: user.badge,
+        preference: user.preference,
+        access_type: user.access_type,
+      },
+      secretKey
+    );
+    res.send(token);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ error: "Internal Server Error" });
+  }
 });
 
 export default { router };

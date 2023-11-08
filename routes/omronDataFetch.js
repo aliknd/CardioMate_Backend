@@ -1,28 +1,37 @@
 import express from "express";
-import axios from "axios"; // Import axios
+import axios from "axios";
 
 const router = express.Router();
 
 router.get("/", async (req, res) => {
+  //console.log(req);
+  const accessToken = req.query.access_token;
+  // console.log(accessToken);
+  if (!accessToken) {
+    return res.status(401).send("Access token is required.");
+  }
+
   try {
-    // Assuming the access token is passed directly as a query parameter
-    // after successful authentication and token exchange.
-    const accessToken = req.query.access_token;
-
-    if (!accessToken) {
-      return res.status(401).send("Access token is required.");
-    }
-
-    const userData = await axios.get(
+    const userData = await axios.post(
       "https://stg-oauth.ohiomron.com/stg/api/measurement",
+      new URLSearchParams({
+        type: "bloodpressure",
+        since: "11-06-23",
+      }),
       {
-        headers: { Authorization: `Bearer ${accessToken}` },
-        params: { type: "bloodpressure", limit: "10" },
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Authorization: `Bearer ${accessToken}`,
+        },
       }
     );
+    //console.log(response);
+    //console.log(userData.data);
     res.json(userData.data);
   } catch (error) {
-    res.status(500).send(`Error fetching data: ${error.message}`);
+    res
+      .status(error.response.status)
+      .send(`Error fetching data: ${error.response.data}`);
   }
 });
 

@@ -9,7 +9,7 @@ dotenv.config();
 async function getAccessToken(code) {
   try {
     const tokenResponse = await axios.post(
-      "https://stg-oauth.ohiomron.com/connect/token",
+      "https://stg-oauth.ohiomron.com/stg/connect/token",
       new URLSearchParams({
         client_id: process.env.CLIENT_ID,
         client_secret: process.env.CLIENT_SECRET,
@@ -19,6 +19,7 @@ async function getAccessToken(code) {
       }),
       { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
     );
+    //console.log(tokenResponse);
     return tokenResponse.data.access_token;
   } catch (error) {
     throw new Error(
@@ -38,7 +39,7 @@ router.get("/", async (req, res) => {
     const accessToken = await getAccessToken(code);
     // Here you can redirect the user or send the access token to the client
     // For example, redirecting to a data fetch route:
-    res.redirect(`/fetch-omron-data?access_token=${accessToken}`);
+    res.redirect(`/fetchdata?access_token=${accessToken}`);
     // Or, you might want to send the token to the client for further use
     // res.json({ accessToken });
   } catch (error) {

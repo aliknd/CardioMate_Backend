@@ -131,7 +131,7 @@ CREATE TABLE IF NOT EXISTS `user` (
   `name` varchar(100) NOT NULL,
   `email` varchar(50) NOT NULL,
   `genCategory` varchar(20) NOT NULL,
-  `ageCategory` varchar(20) NOT NULL,
+  `birthdate` varchar(50) NOT NULL,
   `raceCategory` varchar(20) NOT NULL,
   `preference` varchar(20) NOT NULL,
   `badge` int(5) NOT NULL DEFAULT '0',
