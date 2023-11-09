@@ -50,13 +50,13 @@ router.post(
       userId: parseInt(req.body.userId),
     };
     //console.log(listing);
-    //console.log("Raw payload:", listing.payload);
+    console.log("Raw payload:", listing.payload);
     let parsedPayload = JSON.parse(listing.payload);
 
     let recordsToInsert = Object.values(parsedPayload)
       .map((item) => {
         if (!item.step1Value || !item.step2Value) {
-          console.error("Invalid item structure:", item);
+          console.error("item structure:", item);
           return null; // or handle this case as needed
         }
 
@@ -64,10 +64,25 @@ router.post(
         let labelOrDescription =
           item.label === "Others" ? item.description : item.label;
 
+        // Check if step2Value is an object with a label, or just a string (date)
+        let step2Value;
+        if (
+          typeof item.step2Value === "object" &&
+          item.step2Value !== null &&
+          "label" in item.step2Value
+        ) {
+          step2Value = item.step2Value.label;
+        } else if (typeof item.step2Value === "string") {
+          step2Value = item.step2Value;
+        } else {
+          console.error("Invalid step2Value structure:", item.step2Value);
+          return null;
+        }
+
         return [
           labelOrDescription,
           item.step1Value.label,
-          item.step2Value.label,
+          step2Value,
           listing.userId,
         ];
       })
