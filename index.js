@@ -18,6 +18,8 @@ import omronhg from "./routes/omronhg.js";
 import omronAuth from "./routes/omronAuth.js";
 import omronCallback from "./routes/omronCallback.js";
 import omronDataFetch from "./routes/omronDataFetch.js";
+import refreshAccessToken from "./routes/tokenRefresh.js";
+import myDatabase from "./config/db.js";
 
 import compression from "compression";
 import config from "config";
@@ -75,6 +77,37 @@ function appendToCsvFile(filePath, record) {
   const recordString = Object.values(record).join(",");
   fs.appendFileSync(filePath, recordString + "\n");
 }
+
+// Periodic check for token expiry
+setInterval(() => {
+  const query = "SELECT user_id FROM omronuser_tokens WHERE expiry_time <= ?";
+  const currentTimePlusBuffer = Date.now() + 5 * 60 * 1000; // Buffer time, e.g., 5 minutes
+
+  myDatabase.pool.query(
+    query,
+    [currentTimePlusBuffer],
+    async (err, results) => {
+      if (err) {
+        console.error("Error fetching tokens close to expiry:", err);
+        return;
+      }
+
+      console.log(results);
+
+      for (const row of results) {
+        try {
+          await refreshAccessToken(row.user_id);
+          console.log(`Token refreshed for user_id: ${row.user_id}`);
+        } catch (error) {
+          console.error(
+            `Error refreshing token for user_id: ${row.user_id}`,
+            error
+          );
+        }
+      }
+    }
+  );
+}, 300000); // Interval for checking, e.g., every 5 minutes
 
 // Start the server
 

@@ -62,7 +62,7 @@ router.post(
 
         // Use the description if the label is 'Others', otherwise use the label
         let labelOrDescription =
-          item.label === "Others" ? item.description : item.label;
+          item.label === "Others" ? item.description : item.value;
 
         // Check if step2Value is an object with a label, or just a string (date)
         let step2Value;

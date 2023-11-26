@@ -4,6 +4,7 @@ const router = express.Router();
 import axios from "axios";
 import dotenv from "dotenv";
 dotenv.config();
+import myDatabase from "../config/db.js";
 
 // Function to exchange the authorization code for an access token
 async function getAccessToken(code) {
@@ -19,8 +20,7 @@ async function getAccessToken(code) {
       }),
       { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
     );
-    //console.log(tokenResponse);
-    return tokenResponse.data.access_token;
+    return tokenResponse.data; // Return the entire response data
   } catch (error) {
     throw new Error(
       `Error exchanging authorization code for token: ${error.message}`
@@ -31,20 +31,35 @@ async function getAccessToken(code) {
 // Callback route to handle the response from Omron's OAuth service
 router.get("/", async (req, res) => {
   const code = req.query.code;
+  //console.log(code);
+  const userId = decodeURIComponent(req.query.state); // Decode and retrieve the user_id
   if (!code) {
     return res.status(400).send("Authorization code is missing.");
   }
 
+  const re_userId = userId;
+  const tokenData = await getAccessToken(code); // Get the entire token data
+  const accessToken = tokenData.access_token;
+  const refreshToken = tokenData.refresh_token;
+  const expiresIn = tokenData.expires_in.value;
+  console.log("Expires In:", expiresIn);
+  const expiryTime = Date.now() + expiresIn * 1000; // Convert to milliseconds
+
   try {
-    const accessToken = await getAccessToken(code);
-    // Here you can redirect the user or send the access token to the client
-    // For example, redirecting to a data fetch route:
-    res.redirect(`/fetchdata?access_token=${accessToken}`);
-    // Or, you might want to send the token to the client for further use
-    // res.json({ accessToken });
+    await myDatabase.pool.query(
+      "INSERT INTO myomronuser_tokens (user_id, access_token, refresh_token, expiry_time) VALUES (?, ?, ?, ?)",
+      [re_userId, accessToken, refreshToken, expiryTime],
+      function (err, result) {
+        if (err) throw err;
+        console.log("Number of records inserted: " + result.affectedRows);
+      }
+    );
   } catch (error) {
-    res.status(500).send(`Error in token exchange: ${error.message}`);
+    // Handle any errors that occurred during password hashing or database insertion
+    console.error("Error:", error);
   }
+  console.log("Redirecting to fetchdata with token:", accessToken);
+  res.redirect(`/fetchdata?access_token=${accessToken}`);
 });
 
 export default { router };

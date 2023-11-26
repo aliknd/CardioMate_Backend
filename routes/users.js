@@ -31,7 +31,8 @@ router.post("/", validateWith.validateWith(schema), async (req, res) => {
     access_type,
   } = req.body;
   const user_received = await usersStore.getUserByEmail(email);
-  const user_r = user_received[0][0];
+  console.log(user_received);
+  const user_r = user_received[0];
   if (user_r)
     return res
       .status(400)
