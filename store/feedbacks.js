@@ -1,6 +1,4 @@
 import myDatabase from "../config/db.js";
-const result = await myDatabase.pool.query("SELECT * FROM feedback");
-var feedbacks = result[0];
 
 const addFeedback = (feedback) => {
   const feedbackCategory = feedback.categoryLabel;
@@ -20,7 +18,10 @@ const addFeedback = (feedback) => {
   );
 };
 
-const getFeedback = feedbacks;
+async function getFeedback() {
+  const result = await myDatabase.pool.query("SELECT * FROM feedback");
+  return result[0];
+}
 
 const getListing = (id) => listings.find((listing) => listing.id === id);
 

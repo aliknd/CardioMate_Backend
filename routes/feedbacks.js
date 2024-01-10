@@ -2,6 +2,7 @@ import express from "express";
 const router = express.Router();
 import Joi from "joi";
 import multer from "multer";
+import auth from "../middleware/auth.js";
 
 import store from "../store/feedbacks.js";
 import validateWith from "../middleware/validation.js";
@@ -42,4 +43,15 @@ router.post(
   }
 );
 
-export default { router };
+router.get("/", auth.auth, async (req, res) => {
+  try {
+    const feedbacks = await store.getFeedback();
+    res.send(feedbacks);
+  } catch (error) {
+    // Handle error, maybe send a 500 status code
+    console.error(error);
+    res.status(500).send("Server error");
+  }
+});
+
+export default router;

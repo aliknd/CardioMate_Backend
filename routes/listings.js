@@ -2,6 +2,7 @@ import express from "express";
 const router = express.Router();
 import Joi from "joi";
 import multer from "multer";
+import moment from "moment-timezone";
 
 import store from "../store/listings.js";
 import validateWith from "../middleware/validation.js";
@@ -44,55 +45,50 @@ router.post(
   ],
 
   async (req, res) => {
-    //console.log(req.body);
-    const listing = {
-      payload: req.body.payload,
-      userId: parseInt(req.body.userId),
-    };
-    //console.log(listing);
-    console.log("Raw payload:", listing.payload);
-    let parsedPayload = JSON.parse(listing.payload);
+    try {
+      const { userId, responses } = JSON.parse(req.body.payload);
+      let recordsToInsert = [];
 
-    let recordsToInsert = Object.values(parsedPayload)
-      .map((item) => {
-        if (!item.step1Value || !item.step2Value) {
-          console.error("item structure:", item);
-          return null; // or handle this case as needed
-        }
+      // Extract and format the data from responses
+      const medicationdate = responses.medication.date
+        ? moment(responses.medication.date).format("YYYY-MM-DD HH:mm:ss")
+        : null;
+      const medicationDate_local = responses.medication.date
+        ? moment(responses.medication.date)
+            .tz("Pacific/Honolulu")
+            .format("YYYY-MM-DD HH:mm:ss")
+        : null;
+      const localCreatedAt = moment()
+        .tz("Pacific/Honolulu")
+        .format("YYYY-MM-DD HH:mm:ss");
 
-        // Use the description if the label is 'Others', otherwise use the label
-        let labelOrDescription =
-          item.label === "Others" ? item.description : item.value;
+      // Prepare a record for insertion
+      let record = [
+        userId,
+        responses.interaction.answer,
+        responses.interaction.detail,
+        responses.physicalDiscomfort.answer,
+        responses.physicalDiscomfort.detail,
+        responses.environment.answer,
+        responses.environment.detail,
+        responses.medication.answer,
+        responses.medication.detail,
+        medicationdate,
+        medicationDate_local,
+        responses.mood.value,
+        responses.stressLevel.value,
+        localCreatedAt, // Add local created at time
+      ];
 
-        // Check if step2Value is an object with a label, or just a string (date)
-        let step2Value;
-        if (
-          typeof item.step2Value === "object" &&
-          item.step2Value !== null &&
-          "label" in item.step2Value
-        ) {
-          step2Value = item.step2Value.label;
-        } else if (typeof item.step2Value === "string") {
-          step2Value = item.step2Value;
-        } else {
-          console.error("Invalid step2Value structure:", item.step2Value);
-          return null;
-        }
+      recordsToInsert.push(record);
 
-        return [
-          labelOrDescription,
-          item.step1Value.label,
-          step2Value,
-          listing.userId,
-        ];
-      })
-      .filter((item) => item !== null); // Filter out any nulls from invalid structures
-    //listing.images = req.images.map((fileName) => ({ fileName: fileName }));
-    if (req.user) listing.userId = req.user.userId;
-
-    store.addListing(recordsToInsert);
-
-    res.status(201).send(listing);
+      // Store the processed records in the database
+      store.addListing(recordsToInsert);
+      res.status(201).send({ message: "Listing added successfully." });
+    } catch (error) {
+      console.error(error);
+      res.status(500).send({ error: "Internal Server Error" });
+    }
   }
 );
 

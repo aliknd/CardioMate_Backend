@@ -1,23 +1,19 @@
 import myDatabase from "../config/db.js";
 
-const addListing = (listing) => {
+const addListing = (listings) => {
   myDatabase.pool.query(
-    "INSERT INTO record (substance_fruit_label, crave_use_none_label, crave_use_none_value, user_id) VALUES ?",
-    [listing],
+    "INSERT INTO questionnaire_responses (user_id, interaction_answer, interaction_detail, physicalDiscomfort_answer, physicalDiscomfort_detail, environment_answer, environment_detail, medication_answer, medication_detail, medication_date_time, local_medication_date_time, mood_value, stressLevel_value, local_created_at) VALUES ?",
+    [listings],
     function (err, result) {
-      if (err) throw err;
-      console.log("Inserted Successfully!" + result.affectedRows);
+      if (err) {
+        console.error("Error inserting data:", err);
+        return;
+      }
+      console.log(
+        "Inserted Successfully! Affected Rows:" + result.affectedRows
+      );
     }
   );
-
-  // myDatabase.pool.query(
-  //   "UPDATE user SET badge = ? WHERE id = ?",
-  //   [userBadge, myUserId],
-  //   function (err, result) {
-  //     if (err) throw err;
-  //     console.log("Updated Successfully!" + result.affectedRows);
-  //   }
-  // );
 };
 
 const getListings = async () => {

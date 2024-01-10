@@ -46,7 +46,7 @@ const addUser = async (user) => {
 
 const getUsers = async () => {
   const [users] = await myDatabase.pool.query(
-    "SELECT id, email, genCategory, birthdate, raceCategory, preference, badge, access_type FROM user"
+    "SELECT id, name, email, genCategory, birthdate, raceCategory, preference, badge, access_type FROM user"
   );
   return users;
 };

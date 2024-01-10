@@ -58,7 +58,6 @@ router.get("/", async (req, res) => {
     // Handle any errors that occurred during password hashing or database insertion
     console.error("Error:", error);
   }
-  console.log("Redirecting to fetchdata with token:", accessToken);
   res.redirect(`/fetchdata?access_token=${accessToken}`);
 });
 
