@@ -16,7 +16,7 @@ router.post(
 
     user.expoPushToken = req.body.token;
     //console.log("here is the token", req.body.token.data);
-    //console.log("User registered for notifications: ", user);
+    console.log("User registered for notifications: ", user);
 
     const updateQuery = "UPDATE user SET notification_token = ? WHERE id = ?";
     await myDatabase.pool.query(updateQuery, [

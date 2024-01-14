@@ -85,42 +85,42 @@ function appendToCsvFile(filePath, record) {
   fs.appendFileSync(filePath, recordString + "\n");
 }
 
-// // Periodic check for token expiry
-// setInterval(async () => {
-//   const query = "SELECT user_id FROM omronuser_tokens WHERE expiry_time <= ?";
-//   const currentTimePlusBuffer = Date.now() + 5 * 60 * 1000; // Buffer time, e.g., 5 minutes
+// Periodic check for token expiry
+setInterval(async () => {
+  const query = "SELECT user_id FROM omronuser_tokens WHERE expiry_time <= ?";
+  const currentTimePlusBuffer = Date.now() + 5 * 60 * 1000; // Buffer time, e.g., 5 minutes
 
-//   try {
-//     const [results] = await myDatabase.pool.query(query, [
-//       currentTimePlusBuffer,
-//     ]);
-//     console.log("user_IDs expired: ", results);
+  try {
+    const [results] = await myDatabase.pool.query(query, [
+      currentTimePlusBuffer,
+    ]);
+    console.log("user_IDs expired: ", results);
 
-//     for (const row of results) {
-//       try {
-//         await refreshAccessToken(row.user_id);
-//         console.log(`Token refreshed for user_id: ${row.user_id}`);
-//       } catch (error) {
-//         console.error(
-//           `Error refreshing token for user_id: ${row.user_id}`,
-//           error
-//         );
-//       }
-//     }
-//   } catch (err) {
-//     console.error("Error fetching tokens close to expiry:", err);
-//   }
-// }, 300000); // Interval for checking, e.g., every 5 minutes
+    for (const row of results) {
+      try {
+        await refreshAccessToken(row.user_id);
+        console.log(`Token refreshed for user_id: ${row.user_id}`);
+      } catch (error) {
+        console.error(
+          `Error refreshing token for user_id: ${row.user_id}`,
+          error
+        );
+      }
+    }
+  } catch (err) {
+    console.error("Error fetching tokens close to expiry:", err);
+  }
+}, 300000); // Interval for checking, e.g., every 5 minutes
 
-// // Schedule a task to run every hour for fetching and storing the blood pressure readings
-// setInterval(async () => {
-//   try {
-//     await fetchAndStoreBloodPressureReadings();
-//     console.log("Periodic check for new readings triggered!")
-//   } catch (error) {
-//     console.error("Scheduled task error:", error);
-//   }
-// }, 300000); // Running every hour (3600000 milliseconds)
+// Schedule a task to run every hour for fetching and storing the blood pressure readings
+setInterval(async () => {
+  try {
+    await fetchAndStoreBloodPressureReadings();
+    console.log("Periodic check for new readings triggered!");
+  } catch (error) {
+    console.error("Scheduled task error:", error);
+  }
+}, 300000); // Running every hour (3600000 milliseconds)
 
 // Start the server
 

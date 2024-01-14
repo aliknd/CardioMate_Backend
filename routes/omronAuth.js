@@ -6,7 +6,7 @@ router.get("/", (req, res) => {
   const state = encodeURIComponent(userId); // URL-encode the user_id
 
   const authUrl =
-    `https://stg-oauth-website.ohiomron.com/connect/authorize?` +
+    `https://prd-oauth-website.ohiomron.com/connect/authorize?` +
     `client_id=${process.env.CLIENT_ID}&` +
     `response_type=code&` +
     `redirect_uri=${process.env.REDIRECT_URI}&` +

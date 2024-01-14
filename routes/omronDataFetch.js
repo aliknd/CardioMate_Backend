@@ -13,7 +13,7 @@ router.get("/", async (req, res) => {
 
   try {
     const userData = await axios.post(
-      "https://stg-oauth.ohiomron.com/stg/api/measurement",
+      "https://prd-oauth.ohiomron.com/stg/api/measurement",
       new URLSearchParams({
         type: "bloodpressure",
         since: "11-06-23",

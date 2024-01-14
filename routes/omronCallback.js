@@ -10,7 +10,7 @@ import myDatabase from "../config/db.js";
 async function getAccessToken(code) {
   try {
     const tokenResponse = await axios.post(
-      "https://stg-oauth.ohiomron.com/stg/connect/token",
+      "https://prd-oauth.ohiomron.com/stg/connect/token",
       new URLSearchParams({
         client_id: process.env.CLIENT_ID,
         client_secret: process.env.CLIENT_SECRET,
