@@ -11,7 +11,7 @@ async function refreshAccessToken(userId) {
     const [[{ refresh_token }]] = await myDatabase.pool.query(query, [userId]);
 
     const tokenResponse = await axios.post(
-      "https://stg-oauth.ohiomron.com/stg/connect/token", // Replace with actual URL
+      "https://prd-oauth.ohiomron.com/prd/connect/token", // Replace with actual URL
       new URLSearchParams({
         client_id: process.env.CLIENT_ID,
         client_secret: process.env.CLIENT_SECRET,

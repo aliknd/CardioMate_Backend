@@ -10,7 +10,7 @@ import myDatabase from "../config/db.js";
 async function getAccessToken(code) {
   try {
     const tokenResponse = await axios.post(
-      "https://prd-oauth.ohiomron.com/stg/connect/token",
+      "https://prd-oauth.ohiomron.com/prd/connect/token",
       new URLSearchParams({
         client_id: process.env.CLIENT_ID,
         client_secret: process.env.CLIENT_SECRET,
@@ -38,16 +38,19 @@ router.get("/", async (req, res) => {
   }
 
   const re_userId = userId;
+  console.log("This is the user ID: ", re_userId);
   const tokenData = await getAccessToken(code); // Get the entire token data
+  console.log(tokenData);
   const accessToken = tokenData.access_token;
   const refreshToken = tokenData.refresh_token;
-  const expiresIn = tokenData.expires_in.value;
-  console.log("Expires In:", expiresIn);
+  const expiresIn = tokenData.expires_in;
+  //console.log("Expires In:", expiresIn);
   const expiryTime = Date.now() + expiresIn * 1000; // Convert to milliseconds
+  console.log("This is the expiry time: ", expiryTime);
 
   try {
     await myDatabase.pool.query(
-      "INSERT INTO myomronuser_tokens (user_id, access_token, refresh_token, expiry_time) VALUES (?, ?, ?, ?)",
+      "INSERT INTO omronuser_tokens (user_id, access_token, refresh_token, expiry_time) VALUES (?, ?, ?, ?)",
       [re_userId, accessToken, refreshToken, expiryTime],
       function (err, result) {
         if (err) throw err;

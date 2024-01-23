@@ -13,10 +13,10 @@ router.get("/", async (req, res) => {
 
   try {
     const userData = await axios.post(
-      "https://prd-oauth.ohiomron.com/stg/api/measurement",
+      "https://prd-oauth.ohiomron.com/prd/api/measurement",
       new URLSearchParams({
-        type: "bloodpressure",
-        since: "11-06-23",
+        //type: "bloodpressure+activity+weight+temperature+oxygen+openid+offline_access",
+        since: "09-01-23",
       }),
       {
         headers: {

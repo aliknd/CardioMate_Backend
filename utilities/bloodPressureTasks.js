@@ -28,10 +28,23 @@ async function getCurrentAccessToken(userId) {
 
 async function fetchBloodPressureData(accessToken) {
   try {
-    const response = await axios.get("http://3.227.70.118:9000/fetchdata", {
-      params: { access_token: accessToken },
-    });
-    return response.data.result.bloodPressure;
+    const userData = await axios.post(
+      "https://prd-oauth.ohiomron.com/prd/api/measurement",
+      new URLSearchParams({
+        since: "09-01-23",
+      }),
+      {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    // Assuming the structure of the response is similar, adjust this based on the actual structure
+    const finalData = userData.data.result.bloodPressure;
+    console.log(finalData);
+    return userData.data.result.bloodPressure;
   } catch (error) {
     console.error("Error fetching blood pressure data:", error);
     throw error;
